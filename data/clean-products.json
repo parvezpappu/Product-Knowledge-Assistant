@@ -44,7 +44,7 @@
     "productPrice": 1850,
     "salePrice": null,
     "effectivePrice": 1850,
-    "currency": "bdt",
+    "currency": "BDT",
     "stockQuantity": 60,
     "warranty": null,
     "vendor": "Ryans Computers",
@@ -452,7 +452,7 @@
   {
     "id": "P-1026",
     "name": "Fire-Boltt Phoenix Smartwatch",
-    "category": "smart watch",
+    "category": "smartwatch",
     "brand": "fire-boltt",
     "description": "1.3 inch full touch smartwatch, IP67 rated",
     "productPrice": 2199,

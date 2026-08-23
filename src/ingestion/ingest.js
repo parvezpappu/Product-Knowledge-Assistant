@@ -9,16 +9,9 @@
     const normalizedProducts = normalizeProducts(products);
     const uniqueProducts = removeDuplicates(normalizedProducts);
 
-    // console.log("Raw product:");
-    // console.log(products[0]);
-
-    // console.log("\nNormalized product:");
-    // console.log(normalizedProducts[0]);
-
-    // console.log("\nUnique product:");
-    // console.log(uniqueProducts[0]);
-
-    // console.log("\nTotal rows:", uniqueProducts.length);
+    console.log(`Raw rows: ${products.length}`);
+    console.log(`Normalized rows: ${normalizedProducts.length}`);
+    console.log(`Unique products: ${uniqueProducts.length}`); 
 
 
    const outputPath = path.join( __dirname,"../../data/clean-products.json");
