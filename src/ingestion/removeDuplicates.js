@@ -1,3 +1,4 @@
+
 function removeDuplicates(products) {
   const uniqueProducts = [];
   const seenIds = new Set();
