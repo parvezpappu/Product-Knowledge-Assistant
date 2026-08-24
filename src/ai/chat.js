@@ -5,6 +5,11 @@ const {
   SYSTEM_PROMPT,
   buildUserPrompt,
 } = require("./prompts");
+const {
+  createProviderQuotaError,
+  isDailyQuotaError,
+  isProviderQuotaError,
+} = require("../utils/providerErrors");
 
 dotenv.config({
   path: path.join(__dirname, "../../.env"),
@@ -97,11 +102,19 @@ async function generateGroundedAnswer(
 
       return validateAnswer(response);
     } catch (error) {
+      if (isDailyQuotaError(error)) {
+        throw createProviderQuotaError(error);
+      }
+
       const shouldRetry =
         isRetryableError(error) &&
         attempt < maxAttempts;
 
       if (!shouldRetry) {
+        if (isProviderQuotaError(error)) {
+          throw createProviderQuotaError(error);
+        }
+
         throw error;
       }
 
