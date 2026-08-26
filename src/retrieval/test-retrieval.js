@@ -1,6 +1,5 @@
 const retrievalDecision = require("./retrievalDecision");
 const testCases = [
-  // Products and catalogue queries that should be found
   {
     question: "How much is the Anker PowerCore 10000mAh?",
     expectedFound: true,
@@ -34,7 +33,6 @@ const testCases = [
     expectedFound: true,
   },
 
-  // Products and subjects that should not be found
   {
     question: "Do you sell washing machines?",
     expectedFound: false,

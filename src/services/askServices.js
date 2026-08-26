@@ -18,13 +18,7 @@ const UNKNOWN_MODEL_MESSAGE =
 const UNSUPPORTED_POLICY_MESSAGE =
   "Sorry, I can only answer questions using the supplied product catalogue.";
 
-function getRejectionMessage(question, decision) {
-  const intent = classifyQuestionIntent(question);
-
-  if (intent === "unsupported_policy") {
-    return UNSUPPORTED_POLICY_MESSAGE;
-  }
-
+function getRejectionMessage(decision) {
   if (
     decision.reason === "known_brand_unknown_model" ||
     decision.reason === "model_conflict"
@@ -44,6 +38,17 @@ async function answerQuestion(question) {
 
   const cleanQuestion = question.trim();
 
+  const intent = classifyQuestionIntent(
+    cleanQuestion
+  );
+
+  if (intent === "unsupported_policy") {
+    return {
+      found: false,
+      answer: UNSUPPORTED_POLICY_MESSAGE,
+    };
+  }
+
   const decision = await retrievalDecision(
     cleanQuestion,
     {
@@ -54,10 +59,7 @@ async function answerQuestion(question) {
   if (!decision.accepted) {
     return {
       found: false,
-      answer: getRejectionMessage(
-        cleanQuestion,
-        decision
-      ),
+      answer: getRejectionMessage(decision),
     };
   }
 

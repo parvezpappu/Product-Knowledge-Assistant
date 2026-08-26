@@ -4,16 +4,13 @@ const readExcel = require("./readExcel");
 const normalizeProducts = require("./normalizeProducts");
 const removeDuplicates = require("./removeDuplicates");
 const productToText = require("./productToText");
-const {
-  embedProduct,
-  embeddingConfig,
-} = require("../ai/embeddings");
+const {embedProduct,embeddingConfig,}=require("../ai/embeddings");
 
-const dataDirectory = path.join(__dirname, "../../data");
-const cleanProductsPath = path.join(dataDirectory, "clean-products.json");
-const knowledgeBasePath = path.join(dataDirectory, "knowledge-base.json");
+ const dataDirectory = path.join(__dirname, "../../data");
+ const cleanProductsPath = path.join(dataDirectory, "clean-products.json");
+ const knowledgeBasePath = path.join(dataDirectory, "knowledge-base.json");
 
-async function ingest() {
+ async function ingest() {
   const products = readExcel();
   const normalizedProducts = normalizeProducts(products);
   const uniqueProducts = removeDuplicates(normalizedProducts);
@@ -22,24 +19,18 @@ async function ingest() {
   console.log(`Normalized rows: ${normalizedProducts.length}`);
   console.log(`Unique products: ${uniqueProducts.length}`);
 
-  fs.writeFileSync(
-    cleanProductsPath,
-    JSON.stringify(uniqueProducts, null, 2),
-    "utf8"
-  );
+  fs.writeFileSync(cleanProductsPath,JSON.stringify(uniqueProducts,null,2),"utf8");
   console.log("Clean products saved successfully.");
 
   const knowledgeProducts = [];
 
-  for (let index = 0; index < uniqueProducts.length; index += 1) {
-    const product = uniqueProducts[index];
-    const embeddingText = productToText(product);
+  for(let i=0;i<uniqueProducts.length;i+=1){
+    const product=uniqueProducts[i];
+    const embeddingText=productToText(product);
 
-    console.log(
-      `Embedding ${index + 1}/${uniqueProducts.length}: ${product.name}`
-    );
-
-    const embedding = await embedProduct(product, embeddingText);
+    console.log(`Embedding ${i+1}/${uniqueProducts.length}: ${product.name}`);
+    //embedd hocce.
+    const embedding = await embedProduct(product, embeddingText); //mane jei 4tar combine korchilam oi 4 ta (name,brand,category,description) er text ke embedding korbe ai function
 
     knowledgeProducts.push({
       product,
@@ -48,7 +39,7 @@ async function ingest() {
     });
   }
 
-  const knowledgeBase = {
+  const knowledgeBase={
     metadata: {
       schemaVersion: 1,
       ...embeddingConfig,

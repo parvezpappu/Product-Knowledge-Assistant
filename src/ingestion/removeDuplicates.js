@@ -1,9 +1,9 @@
 
 function removeDuplicates(products) {
-  const uniqueProducts = [];
-  const seenIds = new Set();
+  const uniqueProducts=[];
+  const seenIds=new Set();
 
-  for (const product of products) {
+  for(const product of products){
     if (!product.id || !product.name) {
       const missingFields = [
         !product.id ? "Product ID" : null,

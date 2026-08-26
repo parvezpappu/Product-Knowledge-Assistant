@@ -1,9 +1,6 @@
 const normalizeSearchText = require("./normalizeSearchText");
 const extractModelTokens = require("./extractModelTokens");
-const {
-  getKnownBrands,
-  detectKnownBrands,
-} = require("./knownBrands");
+const {getKnownBrands,detectKnownBrands,}=require("./knownBrands");
 
 function hasSharedToken(firstTokens, secondTokens) {
   const secondTokenSet = new Set(secondTokens);
@@ -48,10 +45,7 @@ function matchProductIdentity(question, knowledgeEntries) {
       product.name
     );
 
-    if (
-      normalizedProductName &&
-      normalizedQuestion.includes(normalizedProductName)
-    ) {
+    if(normalizedProductName &&normalizedQuestion.includes(normalizedProductName)){
       exactNameMatches.push(product);
     }
 
