@@ -1,6 +1,6 @@
 const extractSearchTokens = require("./extractSearchTokens");
 
-const numberFilterWords = new Set([
+const numberFilterWords=new Set([
   "under",
   "over",
   "below",
@@ -13,7 +13,7 @@ const numberFilterWords = new Set([
   "priced",
 ]);
 
-const currencyWords = new Set([
+const currencyWords=new Set([
   "taka",
   "tk",
   "bdt",
@@ -26,28 +26,26 @@ function extractModelTokens(value) {
   const tokens = extractSearchTokens(value);
   const modelTokens = new Set();
 
-  for (let index = 0; index < tokens.length; index += 1) {
-    const token = tokens[index];
-    const previousToken = tokens[index - 1];
-    const nextToken = tokens[index + 1];
+  for (let i=0;i<tokens.length;i+=1){
+    const token=tokens[i];
+    const previousToken=tokens[i-1];
+    const nextToken=tokens[i+1];
 
-    const containsLetter = /\p{L}/u.test(token);
-    const containsNumber = /\p{N}/u.test(token);
-    const isOnlyNumber = /^\p{N}+$/u.test(token);
+    const containsLetter=/\p{L}/u.test(token);//letter ache kina (d99) but 2000 false
+    const containsNumber=/\p{N}/u.test(token);//numeric character
+    const isOnlyNumber=/^\p{N}+$/u.test(token);//only number
 
-    // Examples: d99, s4, p3, bip5, 10000mah, 65w.
+    // d99,s4
     if (containsLetter && containsNumber) {
       modelTokens.add(token);
 
-      // Capacity/power forms should also match a number-only query.
-      if (/^\d+(?:mah|w)$/u.test(token)) {
+      // Capacity/power
+      if(/^\d+(?:mah|w)$/u.test(token)){
         modelTokens.add(token.replace(/[^\d]/g, ""));
       }
-
       continue;
     }
-
-    if (!isOnlyNumber) {
+    if(!isOnlyNumber){
       continue;
     }
 
@@ -55,17 +53,14 @@ function extractModelTokens(value) {
       numberFilterWords.has(previousToken) ||
       currencyWords.has(nextToken);
 
-    if (isPriceFilter) {
+    if(isPriceFilter){ //price na hole skip: bip 5
       continue;
     }
 
-    // Preserve the number itself: "10000".
-    modelTokens.add(token);
+    modelTokens.add(token);//jodi price na hoy. maybe model
 
-    // Join split model forms: "Bip 5" -> "bip5", "Go 4" -> "go4".
-    if (
-      previousToken &&
-      /\p{L}/u.test(previousToken) &&
+    // Bip 5"->"bip5","Go 4" ->"go4".
+    if(previousToken &&/\p{L}/u.test(previousToken) &&
       !numberFilterWords.has(previousToken)
     ) {
       modelTokens.add(`${previousToken}${token}`);

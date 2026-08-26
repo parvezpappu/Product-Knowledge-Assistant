@@ -1,98 +1,104 @@
  const parsePrice = require("../utils/parsePrice");
  
-  function cleanText(value) {
-  if (value === null || value === undefined) {
+  function cleanText(value){
+  if (value===null||value===undefined) {
     return null;
   }
 
-  const cleanedValue = String(value).trim();
+  const cleanedValue=String(value).trim();  //whitespace remove
 
-  if (!cleanedValue) {
+  if(!cleanedValue){
     return null;
   }
-
   return cleanedValue;
-}
-
-function parseStock(value) {
-  if (value === null || value === undefined) {
-    return null;
   }
 
-  const cleanedValue = String(value).trim();
+
+ function parseStock(value){
+  if (value===null||value===undefined) {
+    return null;
+  }
+  const cleanedValue=String(value).trim();
 
   if (!cleanedValue) {
     return null;
   }
 
-  const stock = Number(cleanedValue);
+  const stock=Number(cleanedValue);
 
-  if (!Number.isFinite(stock)) {
+  if(!Number.isFinite(stock)){
     return null;
   }
 
   return stock;
 }
 
-function normalizeText(value) {
-  const text = cleanText(value);
 
-  return text === null ? null : text.toLowerCase();
-}
+function normalizeText(value){
+  const text=cleanText(value);
+  return text===null?null:text.toLowerCase();
+ }
 
 function normalizeDate(value) {
-  if (value === null || value === undefined || value === "") {
+  if (value===null||value===undefined||value==="") {
     return null;
   }
 
   let date;
 
   if (value instanceof Date) {
-    date = value;
-  } else if (typeof value === "number" && Number.isFinite(value)) {
-    const excelEpoch = Date.UTC(1899, 11, 30);
-    date = new Date(excelEpoch + value * 24 * 60 * 60 * 1000);
+    date=value;
+  } else if (typeof value==="number"&&Number.isFinite(value)) {
+    const excelEpoch=Date.UTC(1899, 11, 30);
+
+    date=new Date(
+      excelEpoch + value*24*60*60*1000
+    );
   } else {
-    const text = String(value).trim();
+    const text=String(value).trim();
 
     if (!text) {
       return null;
     }
 
-    date = new Date(text);
+    date=new Date(text);
   }
 
-  return Number.isNaN(date.getTime()) ? null : date.toISOString().slice(0, 10);
+  return Number.isNaN(date.getTime())
+    ? null
+    : date.toISOString().slice(0,10);
 }
 
 
+
+
  function normalizeCurrency(value) {
-  if (value === null || value === undefined) {
+  if(value===null||value===undefined) {
     return null;
   }
 
-  const currency = String(value).trim();
+  const currency=String(value).trim();
 
-  if (!currency) {
+  if(!currency){
     return null;
   }
 
-  return currency.toUpperCase();
+  return currency.toUpperCase();//bdt Bdt so all are becomes uppercase
 }
 
 
 function normalizeCategory(value) {
-  if (value === null || value === undefined) {
+  if (value===null||value===undefined) {
     return null;
   }
 
-  const category = String(value).trim().toLowerCase();
+  const category=String(value).trim().toLowerCase();
 
-  if (!category) {
+  if(!category){
     return null;
   }
 
-  if (category === "smart watch") {
+  if (category==="smart watch") {
     return "smartwatch";
   }
 

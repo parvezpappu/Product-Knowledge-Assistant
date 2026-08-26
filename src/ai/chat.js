@@ -1,144 +1,139 @@
-const path = require("path");
-const dotenv = require("dotenv");
-const { GoogleGenAI } = require("@google/genai");
-const {
-  SYSTEM_PROMPT,
-  buildUserPrompt,
-} = require("./prompts");
-const {
-  createProviderQuotaError,
-  isDailyQuotaError,
-  isProviderQuotaError,
-} = require("../utils/providerErrors");
+  const path = require("path");
+  const dotenv = require("dotenv");
+  const { GoogleGenAI } = require("@google/genai");
+  const {
+    SYSTEM_PROMPT,
+    buildUserPrompt,
+  } = require("./prompts");
 
-dotenv.config({
-  path: path.join(__dirname, "../../.env"),
-  quiet: true,
-});
+  const {
+    createProviderQuotaError,
+    isDailyQuotaError,
+    isProviderQuotaError,
+  } = require("../utils/providerErrors");
 
-const apiKey = process.env.GEMINI_API_KEY;
-const model =
-  process.env.CHAT_MODEL || "gemini-3.7-flash";
-
-const maxAttempts = 3;
-
-if (!apiKey) {
-  throw new Error("GEMINI_API_KEY is missing.");
-}
-
-const ai = new GoogleGenAI({
-  apiKey,
-});
-
-function wait(milliseconds) {
-  return new Promise((resolve) => {
-    setTimeout(resolve, milliseconds);
+  dotenv.config({
+    path: path.join(__dirname, "../../.env"),
+    quiet: true,
   });
-}
 
-function isRetryableError(error) {
-  const status = Number(
-    error?.status || error?.code
-  );
+  const apiKey = process.env.GEMINI_API_KEY;
+  const model =
+    process.env.CHAT_MODEL || "gemini-3.7-flash";
 
-  const message = String(
-    error?.message || error
-  ).toUpperCase();
+  const maxAttempts = 3;
 
-  return (
-    status === 429 ||
-    status >= 500 ||
-    message.includes("RESOURCE_EXHAUSTED") ||
-    message.includes("UNAVAILABLE") ||
-    message.includes("INTERNAL")
-  );
-}
+  if (!apiKey) {
+    throw new Error("GEMINI_API_KEY is missing.");
+  }
 
-function validateAnswer(response) {
-  const finishReason =
-    response.candidates?.[0]?.finishReason;
+  const ai = new GoogleGenAI({
+    apiKey,
+  });
 
-  if (finishReason === "MAX_TOKENS") {
-    throw new Error(
-      "The chat response was truncated because it reached the output-token limit."
+  function wait(milliseconds) {
+    return new Promise((resolve) => {
+      setTimeout(resolve, milliseconds);
+    });
+  }
+
+  function isRetryableError(error) {
+    const status = Number(
+      error?.status || error?.code
+    );
+
+    const message = String(
+      error?.message || error
+    ).toUpperCase();
+
+    return (
+      status === 429 ||
+      status >= 500 ||
+      message.includes("RESOURCE_EXHAUSTED") ||
+      message.includes("UNAVAILABLE") ||
+      message.includes("INTERNAL")
     );
   }
 
-  const answer = response.text?.trim();
+  function validateAnswer(response) {
+    const finishReason = response.candidates?.[0]?.finishReason;
 
-  if (!answer) {
-    throw new Error(
-      "The chat provider returned an empty answer."
-    );
+    if (finishReason === "MAX_TOKENS") {
+      throw new Error(
+        "The chat response was truncated because it reached the output-token limit."
+      );
+    }
+
+    const answer = response.text?.trim();
+
+    if (!answer) {
+      throw new Error(
+        "The chat provider returned an empty answer."
+      );
+    }
+
+    return answer;
   }
 
-  return answer;
-}
+  async function generateGroundedAnswer(question,matchedProducts) {
+    const userPrompt = buildUserPrompt(
+      question,
+      matchedProducts
+    );
 
-async function generateGroundedAnswer(
-  question,
-  matchedProducts
-) {
-  const userPrompt = buildUserPrompt(
-    question,
-    matchedProducts
-  );
+    for (
+      let attempt = 1;
+      attempt <= maxAttempts;
+      attempt += 1
+    ) {
+      try {
+        const response =
+          await ai.models.generateContent({
+            model,
+            contents: userPrompt,
+            config: {
+              systemInstruction: SYSTEM_PROMPT,
+              maxOutputTokens: 1024,
+            },
+          });
 
-  for (
-    let attempt = 1;
-    attempt <= maxAttempts;
-    attempt += 1
-  ) {
-    try {
-      const response =
-        await ai.models.generateContent({
-          model,
-          contents: userPrompt,
-          config: {
-            systemInstruction: SYSTEM_PROMPT,
-            maxOutputTokens: 1024,
-          },
-        });
-
-      return validateAnswer(response);
-    } catch (error) {
-      if (isDailyQuotaError(error)) {
-        throw createProviderQuotaError(error);
-      }
-
-      const shouldRetry =
-        isRetryableError(error) &&
-        attempt < maxAttempts;
-
-      if (!shouldRetry) {
-        if (isProviderQuotaError(error)) {
+        return validateAnswer(response);
+      } catch (error) {
+        if (isDailyQuotaError(error)) {
           throw createProviderQuotaError(error);
         }
 
-        throw error;
+        const shouldRetry=isRetryableError(error)&&attempt<maxAttempts;
+
+        if (!shouldRetry) {
+          if (isProviderQuotaError(error)) {
+            throw createProviderQuotaError(error);
+          }
+
+          throw error;
+        }
+
+        const delay =
+          1000 * 2 ** (attempt - 1);
+
+        console.warn(
+          `Chat request failed temporarily. Retrying in ${delay}ms (${attempt}/${maxAttempts}).`
+        );
+
+        await wait(delay);
       }
-
-      const delay =
-        1000 * 2 ** (attempt - 1);
-
-      console.warn(
-        `Chat request failed temporarily. Retrying in ${delay}ms (${attempt}/${maxAttempts}).`
-      );
-
-      await wait(delay);
     }
+
+    throw new Error(
+      "Chat request failed unexpectedly."
+    );
   }
 
-  throw new Error(
-    "Chat request failed unexpectedly."
-  );
-}
+  module.exports = {
+    generateGroundedAnswer,
 
-module.exports = {
-  generateGroundedAnswer,
-
-  chatConfig: Object.freeze({
-    provider: "google",
-    model,
-  }),
-};
+    chatConfig: Object.freeze({
+      provider: "google",
+      model,
+    }),
+  };

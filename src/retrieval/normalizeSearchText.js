@@ -1,15 +1,13 @@
-function normalizeSearchText(value) {
-  if (value === null || value === undefined) {
+function normalizeSearchText(value){
+  if(value===null||value===undefined){
     return "";
   }
 
   return String(value)
-    .normalize("NFKD")
-    .replace(/\p{M}/gu, "")
     .toLowerCase()
-    .replace(/[^\p{L}\p{N}]+/gu, " ")
+    .replace(/[^\p{L}\p{N}]+/gu, " ")//punctuation
     .trim()
-    .replace(/\s+/g, " ");
+    .replace(/\s+/g, " ");//multiple whitespace k singlee ney.
 }
 
-module.exports = normalizeSearchText;
+module.exports=normalizeSearchText;

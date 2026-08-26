@@ -1,15 +1,13 @@
 
 const express = require("express");
 
-const {
-  answerQuestion,
-} = require("../services/askServices");
+const {answerQuestion,} =require("../services/askServices");
 
-const router = express.Router();
+const router=express.Router();
 
-const maximumQuestionLength = 500;
+const maximumQuestionLength=500;
 
-router.post("/", async (request, response, next) => {
+router.post("/", async(request, response, next) => {
   const question = request.body?.question;
 
   if (
@@ -23,7 +21,7 @@ router.post("/", async (request, response, next) => {
     });
   }
 
-  if (question.trim().length > maximumQuestionLength) {
+  if(question.trim().length > maximumQuestionLength) {
     return response.status(400).json({
       found: false,
       answer:

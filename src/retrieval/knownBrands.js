@@ -7,13 +7,13 @@ function getKnownBrands(knowledgeEntries) {
     );
   }
 
-  const brands = new Set();
+  const brands=new Set();
 
-  for (const entry of knowledgeEntries) {
-    const product = entry.product ?? entry;
+  for(const entry of knowledgeEntries){
+    const product=entry.product??entry;
     const normalizedBrand = normalizeSearchText(product?.brand);
 
-    if (normalizedBrand) {
+    if(normalizedBrand) {
       brands.add(normalizedBrand);
     }
   }
@@ -28,20 +28,22 @@ function detectKnownBrands(question, knownBrands) {
 
   const normalizedQuestion = normalizeSearchText(question);
 
-  if (!normalizedQuestion) {
+  if(!normalizedQuestion) {
     return [];
   }
 
-  const paddedQuestion = ` ${normalizedQuestion} `;
+  //substring like mi xiomi match hote pare..etake prevent korbe
+  //cause " mi " nai but xiomi ache.
+   const startAndEndSpace=` ${normalizedQuestion} `;
 
   return knownBrands.filter((brand) => {
     const normalizedBrand = normalizeSearchText(brand);
 
-    if (!normalizedBrand) {
+    if (!normalizedBrand){
       return false;
     }
 
-    return paddedQuestion.includes(` ${normalizedBrand} `);
+    return startAndEndSpace.includes(` ${normalizedBrand} `);
   });
 }
 
