@@ -224,7 +224,7 @@ Open:
 http://localhost:5173
 ```
 
-During local development, Vite proxies `/api/ask` to the Express endpoint at `http://localhost:3000/ask`, so no backend CORS configuration is required. React, Tailwind CSS, and Vite are managed by the single root `package.json`; `frontend/` contains UI source only.
+During local development, Vite proxies `/api/ask` to the Express endpoint at `http://localhost:3000/ask`, so no backend CORS configuration is required. This localhost address connects only the optional browser UI to the local Express server. Product embeddings and grounded answers use the hosted Gemini API; the project does not require a locally hosted AI model or any separate localhost service. React, Tailwind CSS, and Vite are managed by the single root `package.json`; `frontend/` contains UI source only.
 
 ## Build the Knowledge Base
 
@@ -488,7 +488,7 @@ The submission includes four found and four not-found Postman results, exceeding
 - [JBL Go 4 PDF/data mismatch](docs/screenshots/not-found/03-jbl-go-4.png)
 - [Unsupported return-policy question](docs/screenshots/not-found/04-return-policy.png)
 
-## Assignment Data Mismatch
+## Data Mismatch
 
 The task brief lists `Anker PowerCore 20000mAh` and `JBL Go 4` as expected-found products. Neither product exists in either copy of the supplied spreadsheet. The supplied catalogue instead contains:
 
