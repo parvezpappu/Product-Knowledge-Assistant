@@ -19,7 +19,7 @@
 
   const apiKey = process.env.GEMINI_API_KEY;
   const model =
-    process.env.CHAT_MODEL || "gemini-3.7-flash";
+    process.env.CHAT_MODEL || "gemini-3.5-flash-lite";
 
   const maxAttempts = 3;
 

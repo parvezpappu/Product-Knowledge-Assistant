@@ -1,0 +1,557 @@
+{
+  "info": {
+    "_postman_id": "4349b8e6-ae09-4ee0-9831-3a4aad3c0475",
+    "name": "Product Knowledge Assistant",
+    "description": "Reviewer-ready requests for POST /ask. Start the API with npm start before running this collection.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Found",
+      "item": [
+        {
+          "name": "Amazfit Bip 5 warranty",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"question\": \"What is the warranty on the Amazfit Bip 5?\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/ask"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Product is found', () => pm.expect(pm.response.json().found).to.eql(true));",
+                  "pm.test('Warranty is grounded', () => pm.expect(pm.response.json().answer.toLowerCase()).to.include('12 months'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Soundcore Life P3 stock",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"question\": \"Is the Soundcore Life P3 in stock?\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/ask"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Product is found', () => pm.expect(pm.response.json().found).to.eql(true));",
+                  "pm.test('Stock value is grounded', () => pm.expect(/\\b12\\b/.test(pm.response.json().answer)).to.eql(true));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Misspelled Anker power bank",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"question\": \"powerbnk anker 10000\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/ask"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Misspelled real product is found', () => pm.expect(pm.response.json().found).to.eql(true));",
+                  "pm.test('Correct product is returned', () => pm.expect(pm.response.json().answer.toLowerCase()).to.include('anker powercore 10000mah'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Cheapest smartwatch",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"question\": \"Which is the cheapest smartwatch you have?\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/ask"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Catalogue query is found', () => pm.expect(pm.response.json().found).to.eql(true));",
+                  "pm.test('Cheapest product is grounded', () => pm.expect(pm.response.json().answer.toLowerCase()).to.include('fire-boltt phoenix'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Baseus catalogue query",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"question\": \"Do you have any Baseus products?\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": "{{baseUrl}}/ask"
+          },
+          "event": [{
+            "listen": "test",
+            "script": {
+              "type": "text/javascript",
+              "exec": [
+                "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+                "pm.test('Baseus catalogue query is found', () => pm.expect(pm.response.json().found).to.eql(true));",
+                "pm.test('Answer mentions Baseus', () => pm.expect(pm.response.json().answer.toLowerCase()).to.include('baseus'));"
+              ]
+            }
+          }]
+        },
+        {
+          "name": "Power banks under 2000 taka",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"question\": \"Show me power banks under 2000 taka.\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": "{{baseUrl}}/ask"
+          },
+          "event": [{
+            "listen": "test",
+            "script": {
+              "type": "text/javascript",
+              "exec": [
+                "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+                "pm.test('Price-filter query is found', () => pm.expect(pm.response.json().found).to.eql(true));",
+                "pm.test('Answer contains a price below 2000', () => pm.expect(pm.response.json().answer).to.match(/\\b(?:[1-9]\\d{0,2}|1\\d{3})\\s*BDT\\b/i));"
+              ]
+            }
+          }]
+        },
+        {
+          "name": "JBL Go 3 exact product link",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"question\": \"Give me the product link for the JBL Go 3.\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": "{{baseUrl}}/ask"
+          },
+          "event": [{
+            "listen": "test",
+            "script": {
+              "type": "text/javascript",
+              "exec": [
+                "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+                "pm.test('JBL Go 3 is found', () => pm.expect(pm.response.json().found).to.eql(true));",
+                "pm.test('Exact product link is returned', () => pm.expect(pm.response.json().answer).to.include('https://minutei.com/products/jbl-go-3'));"
+              ]
+            }
+          }]
+        }
+      ]
+    },
+    {
+      "name": "Not Found",
+      "item": [
+        {
+          "name": "Unknown category - washing machine",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"question\": \"Do you sell washing machines?\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/ask"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Unknown category is rejected', () => pm.expect(pm.response.json().found).to.eql(false));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Known brand unknown model - Baseus D99",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"question\": \"Baseus Bowie D99\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/ask"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Unknown model is rejected', () => pm.expect(pm.response.json().found).to.eql(false));",
+                  "pm.test('Exact-model message is returned', () => pm.expect(pm.response.json().answer.toLowerCase()).to.include('exact product model'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PDF-data mismatch - JBL Go 4",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"question\": \"Give me the link for the JBL Go 4.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "The PDF lists JBL Go 4 as expected-found, but the supplied spreadsheet contains only JBL Go 3. Returning found:false prevents a fabricated model or link.",
+            "url": "{{baseUrl}}/ask"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Wrong model is rejected', () => pm.expect(pm.response.json().found).to.eql(false));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Unsupported return policy",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"question\": \"What is your return policy?\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/ask"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Policy question is rejected', () => pm.expect(pm.response.json().found).to.eql(false));",
+                  "pm.test('Catalogue-only message is returned', () => pm.expect(pm.response.json().answer.toLowerCase()).to.include('supplied product catalogue'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Unknown product - iPhone 17 Pro Max",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"question\": \"How much is the iPhone 17 Pro Max?\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": "{{baseUrl}}/ask"
+          },
+          "event": [{
+            "listen": "test",
+            "script": {
+              "type": "text/javascript",
+              "exec": [
+                "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+                "pm.test('Unknown iPhone is rejected', () => pm.expect(pm.response.json().found).to.eql(false));"
+              ]
+            }
+          }]
+        },
+        {
+          "name": "Unknown category - gaming laptop",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"question\": \"I am looking for a gaming laptop.\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": "{{baseUrl}}/ask"
+          },
+          "event": [{
+            "listen": "test",
+            "script": {
+              "type": "text/javascript",
+              "exec": [
+                "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+                "pm.test('Gaming laptop is rejected', () => pm.expect(pm.response.json().found).to.eql(false));"
+              ]
+            }
+          }]
+        },
+        {
+          "name": "Unknown category - fresh milk",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"question\": \"Do you have fresh milk?\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": "{{baseUrl}}/ask"
+          },
+          "event": [{
+            "listen": "test",
+            "script": {
+              "type": "text/javascript",
+              "exec": [
+                "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+                "pm.test('Fresh milk is rejected', () => pm.expect(pm.response.json().found).to.eql(false));"
+              ]
+            }
+          }]
+        },
+        {
+          "name": "Known brand unknown model - Samsung Watch 7",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"question\": \"Do you stock the Samsung Galaxy Watch 7?\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": "{{baseUrl}}/ask"
+          },
+          "event": [{
+            "listen": "test",
+            "script": {
+              "type": "text/javascript",
+              "exec": [
+                "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+                "pm.test('Unknown Samsung model is rejected', () => pm.expect(pm.response.json().found).to.eql(false));"
+              ]
+            }
+          }]
+        },
+        {
+          "name": "PDF-data mismatch - Anker PowerCore 20000mAh",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"question\": \"How much is the Anker PowerCore 20000mAh?\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "The PDF lists this as expected-found, but the supplied spreadsheet contains only the 10000mAh model. The catalogue remains the source of truth.",
+            "url": "{{baseUrl}}/ask"
+          },
+          "event": [{
+            "listen": "test",
+            "script": {
+              "type": "text/javascript",
+              "exec": [
+                "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+                "pm.test('Absent 20000mAh model is rejected', () => pm.expect(pm.response.json().found).to.eql(false));"
+              ]
+            }
+          }]
+        },
+        {
+          "name": "PDF-data mismatch - misspelled Anker 20000",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"question\": \"powerbnk anker 20000\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Misspelling tolerance must not turn a nonexistent 20000mAh model into the real 10000mAh product.",
+            "url": "{{baseUrl}}/ask"
+          },
+          "event": [{
+            "listen": "test",
+            "script": {
+              "type": "text/javascript",
+              "exec": [
+                "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+                "pm.test('Misspelled absent model is rejected', () => pm.expect(pm.response.json().found).to.eql(false));"
+              ]
+            }
+          }]
+        }
+      ]
+    },
+    {
+      "name": "Validation",
+      "item": [
+        {
+          "name": "Empty question",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"question\": \"\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/ask"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 400', () => pm.response.to.have.status(400));",
+                  "pm.test('Validation response is consistent', () => pm.expect(pm.response.json().found).to.eql(false));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,8 +1,6 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
 
-// The validation tests do not call Gemini.
-// This dummy value only allows the application modules to load.
 process.env.GEMINI_API_KEY =
   process.env.GEMINI_API_KEY || "test-api-key";
 
@@ -150,5 +148,30 @@ test("question longer than 500 characters returns HTTP 400", async () => {
   assert.match(
     body.answer,
     /must not exceed 500 characters/
+  );
+});
+
+test("policy question is rejected before retrieval", async () => {
+  const response = await fetch(
+    `${baseUrl}/ask`,
+    {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({
+        question: "What is your return policy?",
+      }),
+    }
+  );
+
+  const body = await response.json();
+
+  assert.equal(response.status, 200);
+  assert.equal(body.found, false);
+
+  assert.equal(
+    body.answer,
+    "Sorry, I can only answer questions using the supplied product catalogue."
   );
 });

@@ -3,13 +3,16 @@
   "version": "1.0.0",
   "main": "src/server.js",
   "scripts": {
-  "start": "node src/server.js",
-  "dev": "nodemon src/server.js",
-  "ingest": "node src/ingestion/ingest.js",
-  "test": "node --test tests/*.test.js",
-  "test:retrieval-live": "node src/retrieval/test-retrieval.js",
-  "test:chat-live": "node src/ai/test-chat.js"
-},
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "frontend:dev": "vite",
+    "frontend:build": "vite build",
+    "frontend:preview": "vite preview",
+    "ingest": "node src/ingestion/ingest.js",
+    "test": "node --test tests/*.test.js",
+    "test:retrieval-live": "node src/retrieval/test-retrieval.js",
+    "test:chat-live": "node src/ai/test-chat.js"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -18,9 +21,15 @@
     "@google/genai": "^2.18.0",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
-    "nodemon": "^3.1.14"
+    "@tailwindcss/vite": "^4.3.3",
+    "@vitejs/plugin-react": "^6.1.0",
+    "nodemon": "^3.1.14",
+    "tailwindcss": "^4.3.3",
+    "vite": "^8.2.2"
   }
 }
